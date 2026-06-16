@@ -1,0 +1,39 @@
+FROM debian:bookworm-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV KUBECTL_VERSION=v1.31.4
+ENV HELM_VERSION=v3.16.3
+ENV TERRAFORM_VERSION=1.10.3
+ENV K6_VERSION=v0.54.0
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl git jq bash docker.io unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# kubectl
+RUN curl -fsSL "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/$(dpkg --print-architecture)/kubectl" \
+    -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
+
+# helm
+RUN curl -fsSL "https://get.helm.sh/helm-${HELM_VERSION}-linux-$(dpkg --print-architecture).tar.gz" \
+    | tar -xz -C /tmp \
+    && mv /tmp/linux-*/helm /usr/local/bin/helm && rm -rf /tmp/linux-*
+
+# terraform
+RUN curl -fsSL "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_$(dpkg --print-architecture).zip" \
+    -o /tmp/terraform.zip \
+    && unzip /tmp/terraform.zip -d /usr/local/bin && rm /tmp/terraform.zip
+
+# k6
+RUN curl -fsSL "https://github.com/grafana/k6/releases/download/${K6_VERSION}/k6-${K6_VERSION}-linux-$(dpkg --print-architecture).tar.gz" \
+    | tar -xz -C /tmp \
+    && mv /tmp/k6-${K6_VERSION}-linux-*/k6 /usr/local/bin/k6 && rm -rf /tmp/k6-*
+
+# k3d
+RUN curl -fsSL https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=v5.7.5 bash
+
+WORKDIR /workspace
+COPY docker/toolbox-entrypoint.sh /usr/local/bin/toolbox-entrypoint.sh
+RUN chmod +x /usr/local/bin/toolbox-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/toolbox-entrypoint.sh"]

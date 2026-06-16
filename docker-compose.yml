@@ -1,0 +1,29 @@
+services:
+  toolbox:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.toolbox
+    environment:
+      KUBECONFIG: /kubeconfig/config
+      K3D_CLUSTER_NAME: devops-assignment
+      IMAGE_REPO: ${IMAGE_REPO:-ghcr.io/devops-takehome/quote-api}
+      GIT_SHA: ${GIT_SHA:-local}
+      # Host path for k3d volume mounts (must be a Docker Desktop shared path)
+      HOST_WORKSPACE: ${PWD}
+    volumes:
+      - kubeconfig:/kubeconfig
+      - ./scripts:/scripts:ro
+      - ./troubleshoot:/troubleshoot
+      - ./helm:/helm:ro
+      - ./terraform:/terraform:ro
+      - ./k6:/k6:ro
+      - ./app:/app-src:ro
+      - ./Dockerfile:/Dockerfile:ro
+      - .:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+    extra_hosts:
+      - "quote-api.localhost:host-gateway"
+    command: ["idle"]
+
+volumes:
+  kubeconfig:

@@ -1,0 +1,7 @@
+rules:
+  - id: hardcoded-aws-key-pattern
+    patterns:
+      - pattern-regex: AKIA[0-9A-Z]{16}
+    message: Possible hardcoded AWS access key
+    severity: ERROR
+    languages: [generic]
