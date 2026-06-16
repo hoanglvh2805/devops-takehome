@@ -5,7 +5,7 @@ fi
 set -euo pipefail
 
 export KUBECONFIG="${KUBECONFIG:-/kubeconfig/config}"
-
+INGRESS_HOST="${INGRESS_HOST:-host.docker.internal}"
 SPOT_NODE=$(kubectl get nodes -l acme.io/capacity=spot -o jsonpath='{.items[0].metadata.name}')
 echo "==> Spot reclaim drill — draining node: ${SPOT_NODE}"
 echo "Pods before drain:"
@@ -16,7 +16,7 @@ echo "==> Starting background curl loop (30 requests)..."
   ok=0
   fail=0
   for i in $(seq 1 30); do
-    if curl -fsS --max-time 3 -H "Host: quote-api.localhost" "http://127.0.0.1:8080/api/quote" >/dev/null 2>&1; then
+    if curl -fsS --max-time 3 -H "Host: quote-api.localhost" "http://${INGRESS_HOST}:8080/api/quote" >/dev/null 2>&1; then
       ok=$((ok + 1))
       echo "  [${i}] OK"
     else

@@ -115,10 +115,11 @@ kubectl rollout status deployment/quote-api -n quote-api --timeout=180s
 kubectl get pods -n quote-api -o wide
 kubectl get hpa,pdb,ingress -n quote-api
 
+INGRESS_HOST="${INGRESS_HOST:-host.docker.internal}"
 echo "==> Smoke test via ingress (host port 8080)..."
 for i in $(seq 1 30); do
-  if curl -fsS -H "Host: quote-api.localhost" "http://127.0.0.1:8080/api/quote" >/dev/null 2>&1; then
-    curl -fsS -H "Host: quote-api.localhost" "http://127.0.0.1:8080/api/quote" | head -c 200
+  if curl -fsS -H "Host: quote-api.localhost" "http://${INGRESS_HOST}:8080/api/quote" >/dev/null 2>&1; then
+    curl -fsS -H "Host: quote-api.localhost" "http://${INGRESS_HOST}:8080/api/quote" | head -c 200
     echo ""
     echo "Deploy OK — quote-api reachable at http://localhost:8080/api/quote"
     exit 0

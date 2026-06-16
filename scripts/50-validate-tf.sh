@@ -4,8 +4,10 @@ if [ ! -f /kubeconfig/config ] && [ -z "${INSIDE_TOOLBOX:-}" ]; then
 fi
 set -euo pipefail
 
-TF_DIR="/terraform/cloudflare"
-cd "${TF_DIR}"
+TF_SRC="/terraform/cloudflare"
+TMP_TF="$(mktemp -d)"
+cp -a "${TF_SRC}/." "${TMP_TF}/"
+cd "${TMP_TF}"
 
 echo "==> terraform fmt -check"
 terraform fmt -check -recursive
