@@ -10,7 +10,7 @@ ROOT="/workspace"
 CLUSTER="${K3D_CLUSTER_NAME:-devops-assignment}"
 GIT_SHA="${GIT_SHA:-$(cat /tmp/git-sha 2>/dev/null || git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo local)}"
 LOCAL_TAG="quote-api:${GIT_SHA}"
-IMAGE_REPO="${IMAGE_REPO:-registry.gitlab.com/mrobert280525/devops-takehome}"
+IMAGE_REPO="${IMAGE_REPO:-ghcr.io/devops-takehome/quote-api}"
 
 echo "==> Using k3s built-in Traefik ingress (IngressClass traefik)..."
 kubectl wait --for=condition=available deployment/traefik -n kube-system --timeout=120s 2>/dev/null \

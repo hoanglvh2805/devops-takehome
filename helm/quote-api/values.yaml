@@ -1,7 +1,7 @@
 replicaCount: 3
 
 image:
-  repository: registry.gitlab.com/mrobert280525/devops-takehome
+  repository: ghcr.io/devops-takehome/quote-api
   pullPolicy: IfNotPresent
   tag: "latest"
 

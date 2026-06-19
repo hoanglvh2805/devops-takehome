@@ -6,7 +6,7 @@ services:
     environment:
       KUBECONFIG: /kubeconfig/config
       K3D_CLUSTER_NAME: devops-assignment
-      IMAGE_REPO: ${IMAGE_REPO:-registry.gitlab.com/mrobert280525/devops-takehome}
+      IMAGE_REPO: ${IMAGE_REPO:-ghcr.io/devops-takehome/quote-api}
       GIT_SHA: ${GIT_SHA:-local}
       # Host path for k3d volume mounts (must be a Docker Desktop shared path)
       HOST_WORKSPACE: ${PWD}
