@@ -6,7 +6,7 @@ set -euo pipefail
 
 ROOT="/workspace"
 CLUSTER="${K3D_CLUSTER_NAME:-devops-assignment}"
-IMAGE_REPO="${IMAGE_REPO:-ghcr.io/devops-takehome/quote-api}"
+IMAGE_REPO="${IMAGE_REPO:-registry.gitlab.com/mrobert280525/devops-takehome}"
 GIT_SHA="${GIT_SHA:-$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo local)}"
 TAG="${IMAGE_REPO}:${GIT_SHA}"
 LOCAL_TAG="quote-api:${GIT_SHA}"

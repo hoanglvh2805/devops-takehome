@@ -1,0 +1,37 @@
+# GitLab CI — build, SAST gate, push to GitLab Container Registry (public)
+stages:
+  - test
+  - build
+
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+
+semgrep_sast:
+  stage: test
+  image: python:3.12-slim
+  script:
+    - pip install --quiet semgrep
+    - semgrep scan --config p/python --config .semgrep.yml --error --metrics=off app/
+
+unit_test:
+  stage: test
+  image: python:3.12-slim
+  script:
+    - pip install -r app/requirements.txt httpx pytest
+    - pytest tests/ -v
+
+build_and_push:
+  stage: build
+  image: docker:27
+  services:
+    - docker:27-dind
+  needs: [semgrep_sast, unit_test]
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - export TAG="${CI_COMMIT_SHORT_SHA}"
+    - docker build -t "${CI_REGISTRY_IMAGE}:${TAG}" -t "${CI_REGISTRY_IMAGE}:latest" .
+    - docker push "${CI_REGISTRY_IMAGE}:${TAG}"
+    - docker push "${CI_REGISTRY_IMAGE}:latest"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
