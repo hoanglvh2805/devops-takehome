@@ -5,7 +5,7 @@ Local Kubernetes harness (k3d, 4 worker nodes) + Quote API + ArgoCD GitOps + tro
 ## Quick start
 
 ```bash
-git clone <your-repo> && cd <your-repo>
+git clone git@github.com:hoanglvh2805/devops-takehome.git && cd devops-takehome
 docker compose up -d --build
 ./scripts/run-all.sh
 ```
@@ -13,10 +13,10 @@ docker compose up -d --build
 After `run-all.sh` completes:
 
 ```bash
-curl http://localhost:8080/api/quote
+curl -H "Host: quote-api.localhost" http://localhost:8080/api/quote
 ```
 
-Set `IMAGE_REPO=ghcr.io/<your-user>/<repo-name>` before `run-all.sh` if you pushed the image via GitHub Actions.
+Container image (GitHub Actions → GHCR): `ghcr.io/hoanglvh2805/devops-takehome:<git-sha>`
 
 ## Architecture
 
